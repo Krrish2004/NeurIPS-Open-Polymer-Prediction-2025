@@ -11,7 +11,11 @@ from sklearn.multioutput import MultiOutputRegressor
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.preprocessing import StandardScaler
 
-from ..config import TARGET_COLUMNS, RANDOM_STATE
+# Import from parent config
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import TARGET_COLUMNS, RANDOM_STATE
 
 
 class BaselineModel:

@@ -195,4 +195,30 @@ def preprocess_features(train_features: pd.DataFrame,
                 columns=test_features.columns
             )
     
-    return train_features, test_features, scaler 
+    return train_features, test_features, scaler
+
+
+def extract_molecular_features(smiles_list):
+    """
+    Extract molecular features from a list of SMILES strings.
+    
+    Args:
+        smiles_list: List or array of SMILES strings
+        
+    Returns:
+        numpy array of molecular features
+    """
+    features = []
+    
+    for smiles in smiles_list:
+        if pd.isna(smiles) or smiles == '':
+            # Handle missing SMILES with default features
+            mol_features = smiles_to_features('C')  # Default to methane
+        else:
+            mol_features = smiles_to_features(smiles)
+        
+        # Convert to list of values
+        feature_values = list(mol_features.values())
+        features.append(feature_values)
+    
+    return np.array(features) 

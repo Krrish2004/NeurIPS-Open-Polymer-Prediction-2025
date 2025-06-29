@@ -10,7 +10,11 @@ from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import StandardScaler
 
-from ..config import TARGET_COLUMNS, RANDOM_STATE
+# Import from parent config
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import TARGET_COLUMNS, RANDOM_STATE
 
 
 def load_data(train_path: str, test_path: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -177,4 +181,29 @@ def weighted_mae(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     weighted_errors = errors * weights[np.newaxis, :]
     wmae = np.nanmean(weighted_errors)
     
-    return wmae 
+    return wmae
+
+
+class DataProcessor:
+    """Data processor for polymer prediction."""
+    
+    def __init__(self):
+        self.target_columns = TARGET_COLUMNS
+        self.feature_scaler = StandardScaler()
+        self.target_scalers = {}
+    
+    def prepare_data(self, df, is_training=True):
+        """Prepare data for training or inference."""
+        # Extract SMILES strings
+        smiles_data = df['SMILES'].values
+        
+        # Extract molecular features
+        from utils.smiles_processing import extract_molecular_features
+        X = extract_molecular_features(smiles_data)
+        
+        if is_training:
+            # Extract targets
+            y = df[self.target_columns].values
+            return X, y
+        else:
+            return X, None 

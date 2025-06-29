@@ -52,4 +52,50 @@ MAX_SMILES_LENGTH = 300
 FEATURE_SCALING = True
 
 # Evaluation
-EVALUATION_METRIC = 'weighted_mae' 
+EVALUATION_METRIC = 'weighted_mae'
+
+
+class Config:
+    """Configuration class for the polymer prediction project."""
+    
+    def __init__(self):
+        # Paths
+        self.root_dir = ROOT_DIR
+        self.data_dir = DATA_DIR
+        self.output_dir = OUTPUT_DIR
+        self.models_dir = MODEL_DIR
+        
+        # Data files
+        self.train_path = TRAIN_FILE
+        self.test_path = TEST_FILE
+        self.sample_submission_path = SAMPLE_SUBMISSION_FILE
+        
+        # Model parameters
+        self.random_state = RANDOM_STATE
+        self.target_columns = TARGET_COLUMNS
+        self.cv_folds = N_FOLDS
+        self.batch_size = BATCH_SIZE
+        self.num_epochs = NUM_EPOCHS
+        self.learning_rate = LEARNING_RATE
+        self.weight_decay = WEIGHT_DECAY
+        self.early_stopping_patience = EARLY_STOPPING_PATIENCE
+        
+        # Feature extraction
+        self.max_smiles_length = MAX_SMILES_LENGTH
+        self.feature_scaling = FEATURE_SCALING
+        
+        # Evaluation
+        self.evaluation_metric = EVALUATION_METRIC
+        
+        # Property weights for weighted MAE calculation
+        self.property_weights = {
+            'Tg': 0.15,
+            'FFV': 0.2, 
+            'Tc': 0.2,
+            'Density': 0.2,
+            'Rg': 0.25
+        }
+        
+        # Model configurations
+        self.transformer_config = TRANSFORMER_CONFIG
+        self.gnn_config = GNN_CONFIG 

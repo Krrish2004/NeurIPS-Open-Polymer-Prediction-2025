@@ -8,7 +8,11 @@ import pandas as pd
 from typing import Dict, List, Union, Optional
 from sklearn.metrics import mean_absolute_error, r2_score
 
-from ..config import TARGET_COLUMNS
+# Import from parent config
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import TARGET_COLUMNS
 
 
 def calculate_metrics(y_true: pd.DataFrame, 
@@ -123,4 +127,63 @@ def print_metrics(metrics: Dict[str, Union[float, Dict[str, float]]]) -> None:
     if 'weighted_mae' in metrics:
         print(f"Weighted MAE: {metrics['weighted_mae']:.4f}")
     
-    print("=" * 40) 
+    print("=" * 40)
+
+
+def calculate_weighted_mae(y_true: np.ndarray, y_pred: np.ndarray, property_weights: dict = None) -> float:
+    """
+    Calculate weighted MAE with specified property weights.
+    
+    Args:
+        y_true: True values (n_samples, n_targets)
+        y_pred: Predicted values (n_samples, n_targets)
+        property_weights: Dictionary of property weights
+        
+    Returns:
+        Weighted MAE score
+    """
+    if property_weights is None:
+        # Use default weights
+        property_weights = {
+            'Tg': 0.15,
+            'FFV': 0.2, 
+            'Tc': 0.2,
+            'Density': 0.2,
+            'Rg': 0.25
+        }
+    
+    # Convert to arrays if needed
+    if not isinstance(y_true, np.ndarray):
+        y_true = np.array(y_true)
+    if not isinstance(y_pred, np.ndarray):
+        y_pred = np.array(y_pred)
+    
+    # Handle 1D arrays by reshaping
+    if y_true.ndim == 1:
+        y_true = y_true.reshape(-1, 1)
+    if y_pred.ndim == 1:
+        y_pred = y_pred.reshape(-1, 1)
+    
+    # Calculate MAE for each target
+    maes = []
+    weights_list = []
+    target_names = list(property_weights.keys())
+    
+    for i, target in enumerate(target_names):
+        if i < y_true.shape[1]:
+            # Get valid (non-NaN) values
+            mask = ~np.isnan(y_true[:, i])
+            if mask.sum() > 0:
+                mae = np.mean(np.abs(y_true[mask, i] - y_pred[mask, i]))
+                maes.append(mae)
+                weights_list.append(property_weights[target])
+    
+    if not maes:
+        return 0.0
+    
+    # Calculate weighted average
+    maes = np.array(maes)
+    weights_list = np.array(weights_list)
+    weighted_mae = np.average(maes, weights=weights_list)
+    
+    return weighted_mae 
