@@ -15,6 +15,7 @@ build/
 venv/
 env/
 ENV/
+polymer_env/
 
 # Jupyter Notebook
 .ipynb_checkpoints
