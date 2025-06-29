@@ -262,11 +262,9 @@ Contributions are welcome! Please follow these guidelines:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - NeurIPS 2025 Competition Organizers
-- PyTorch and scikit-learn communities
-- RDKit developers for molecular processing inspiration
 - Open-source polymer datasets contributors
 
 ## 📞 Contact
